@@ -3,12 +3,16 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 dotenv.config();
 const uri = process.env.MONGODB_URI;
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = 5000;
+
+app.use(cors());
+app.use(express.json());
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -23,12 +27,24 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const db = client.db("study-nook")
+    const roomsCollection = db.collection("rooms")
+
+    app.post('/create-room', async (req, res) => {
+        const newRoomData = req.body;
+        console.log(newRoomData);
+        const result = await roomsCollection.insertOne(newRoomData);
+        res.json(result);
+    })
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
   }
 }
 run().catch(console.dir);
@@ -39,5 +55,5 @@ app.get('/', (req, res)=>{
 
 
 app.listen(PORT, ()=>{
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on ${PORT}`);
 })
