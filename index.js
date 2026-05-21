@@ -42,6 +42,16 @@ async function run() {
       res.json(result);
     })
 
+    app.patch('/room-details/:id', async (req, res) => {
+      const {id} = req.params;
+      const updatedData = req.body;
+      const result = await roomsCollection.updateOne(
+        {_id: new ObjectId(id)},
+        {$set: updatedData}
+      )
+      res.json(result);
+    })
+
     app.post('/create-room', async (req, res) => {
         const newRoomData = req.body;
         console.log(newRoomData);
