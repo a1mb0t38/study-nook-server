@@ -30,6 +30,7 @@ async function run() {
 
     const db = client.db("study-nook")
     const roomsCollection = db.collection("rooms")
+    const bookingsCollection = db.collection("bookings")
 
     app.get('/rooms', async (req, res) => {
        const rooms = await roomsCollection.find().sort({ _id: -1}).limit(6).toArray();
@@ -60,6 +61,12 @@ async function run() {
     app.delete('/room-details/:id', async (req, res) => {
       const {id} = req.params;
       const result = await roomsCollection.deleteOne({_id: new ObjectId(id)});
+      res.json(result);
+    })
+
+    app.post('/booking', async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingsCollection.insertOne(bookingData);
       res.json(result);
     })
 
