@@ -36,6 +36,11 @@ async function run() {
        res.json(rooms);
     })
 
+    app.get('/all-rooms', async (req, res) => {
+      const rooms = await roomsCollection.find().toArray();
+      res.json(rooms);
+    })
+
     app.get('/room-details/:id', async (req, res) => {
       const {id} = req.params;
       const result = await roomsCollection.findOne({_id: new ObjectId(id)});
