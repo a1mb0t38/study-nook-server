@@ -66,6 +66,22 @@ async function run() {
 
     app.post('/booking', async (req, res) => {
       const bookingData = req.body;
+      const {roomId, bookingDate, startTime, endTime} = bookingData;
+      const newStart = Number(startTime.split(':')[0]);
+      const newEnd = Number(endTime.split(':')[0]);
+      const existingBookings = await bookingsCollection.find({roomId, bookingDate}).toArray();
+
+      const isConflict = existingBookings.some(booking => {
+        const existingStart = Number(booking.startTime.split(':')[0]);
+        const existingEnd = Number(booking.endTime.split(':')[0]);
+        return (newStart < existingEnd && newEnd > existingStart);
+      })
+
+      if(isConflict){
+        return res.status(400).json({message: "Time slot is already booked. Please choose a different time."});
+      }
+
+
       const result = await bookingsCollection.insertOne(bookingData);
       res.json(result);
     })
