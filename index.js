@@ -70,6 +70,12 @@ async function run() {
       res.json(result);
     })
 
+    app.delete('/booking/:roomId', async (req, res) => {
+      const {roomId} = req.params;
+      const result = await bookingsCollection.deleteOne({roomId: roomId});
+      res.json(result);
+    })
+
     app.post('/booking', async (req, res) => {
       const bookingData = req.body;
       const {roomId, bookingDate, startTime, endTime} = bookingData;
