@@ -70,9 +70,9 @@ async function run() {
       res.json(result);
     })
 
-    app.delete('/booking/:roomId', async (req, res) => {
-      const {roomId} = req.params;
-      const result = await bookingsCollection.deleteOne({roomId: roomId});
+    app.delete('/booking/:_id', async (req, res) => {
+      const {_id} = req.params;
+      const result = await bookingsCollection.deleteOne({_id: new ObjectId(_id)});
       res.json(result);
     })
 
